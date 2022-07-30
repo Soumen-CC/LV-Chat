@@ -233,4 +233,12 @@ class User extends Authenticatable
 
         return $this->traitDeleteImage(self::$PATH.DIRECTORY_SEPARATOR.$image);
     }
+
+    public function coursesAndUsers(){
+        return $this->belongsToMany(Course::class)
+            ->select('courses.id', 'title')
+            ->with(['enrolledStudents'=>function($q){
+                $q->select('users.id', 'email', 'name', 'photo_url');
+            }]);
+    }
 }

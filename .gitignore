@@ -6,6 +6,7 @@
 /public/uploads
 /storage/*.key
 /vendor
+/vendor - Copy
 .env
 .env.backup
 .phpunit.result.cache

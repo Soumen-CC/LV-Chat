@@ -6,6 +6,7 @@ use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\API\RegisterRequest;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Admin;
 use App\Repositories\AccountRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
@@ -43,8 +44,24 @@ class AuthAPIController extends AppBaseController
             return $this->sendError('username and password required', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        if(!$request->get('role')) {
+            return $this->sendError('Please select your role', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        // $modelType = '';
+        // $role = Role::findOrFail($request->get('role'));
+        // if($role->name === 'Students'){
+        //     /** @var User $user */
+        //     $user = User::whereRaw('lower(email) = ?', [$email])->first();
+        //     $modelType = 'App\Models\User';
+        // }
+        // else {
+        //     $user = Admin::whereRaw('lower(email) = ?', [$email])->first();
+        //     $modelType = 'App\Models\Admin';
+        // }
+
         /** @var User $user */
         $user = User::whereRaw('lower(email) = ?', [$email])->first();
+
         if (empty($user)) {
             return $this->sendError('Invalid username or password', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -56,8 +73,8 @@ class AuthAPIController extends AppBaseController
         if (!$user->is_active) {
             return JsonResponse::fromJsonString(ResponseUtil::makeError('Your account is deactivated. Please verify your email for account activation.'), Response::HTTP_UNAUTHORIZED);
         }
-
-        $tokenResult = $user->createToken('Personal Access Token');
+        
+        $tokenResult = $user->createToken('Howofwhat@@Chat');
         $token = $tokenResult->token;
         $token->save();
 

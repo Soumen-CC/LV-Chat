@@ -50,7 +50,7 @@
                                             {{ errors.first('password') }}
                                         </div>
                                     </div>
-                                    <!-- <div>
+                                    <div>
                                         <b-form-group id="input-group-3" label="Select Role" label-for="input-3">
                                             <b-form-select 
                                                 v-validate="'required'" 
@@ -62,12 +62,12 @@
                                         <div class="error-msg" v-if="errors.has('role')">
                                             {{ errors.first('role') }}
                                         </div>
-                                    </div> -->
+                                    </div> 
                                     <!-- <div class="remember-me">
                                         <input type="checkbox" tabindex="3" id="remember_me" v-model="rememberMe">
                                         <label class="remember-me__text"
                                                for="remember_me">{{$t('auth.rememberMe')}}</label>
-                                    </div> -->
+                                    </div>-->
 
                                     <b-row class="justify-content-center">
                                         <b-col cols="6" class="text-center">
@@ -117,16 +117,13 @@
                 loginForm: Object.assign({}, loginForm),
                 rememberMe: false,
                 userRegistered: false,
-                options: [
-                    { value: 'Admin', text: 'Admin' },
-                    { value: 'Instructor', text: 'Instructor' },
-                    { value: 'Students', text: 'Students' },
-                ]
+                options: []
             }
         },
         methods: {
             ...mapActions({
                 login: types.APP_LOGIN,
+                roles: types.GET_ROLE_LIST
             }),
             onLogin () {
                 this.$validator.validateAll()
@@ -165,12 +162,24 @@
                     errorMsgToast(this.$route.query.msg)
                 }
             },
+            getRoles(){
+                this.roles()
+                .then(res => {
+                    res.map(role => {
+                        this.options.push({
+                            value: role.id,
+                            text: role.name,
+                        })
+                    })
+                })
+            }
         },
         created () {
             if (this.$route.query.userRegistered) {
                 this.userRegistered = true
             }
             this.showAccountActiveMsg()
+            this.getRoles();
         },
         mounted () {
             const user = localStorage.getItem('currentUser')

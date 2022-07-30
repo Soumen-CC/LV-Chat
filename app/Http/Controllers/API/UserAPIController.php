@@ -33,8 +33,7 @@ class UserAPIController extends AppBaseController
      */
     public function getUsersList()
     {
-        
-        $users = [];
+        /*$users = [];
         if(getLoggedInUser()->getRoleNameAttribute() === 'Student') {
             // $users = User::orderBy('name','asc')->where('is_super', 'N')->whereHas('roles', function($q){
             //     $q->where(['id'=> 1]);
@@ -47,19 +46,44 @@ class UserAPIController extends AppBaseController
             }
         }
         else {
-            $url = "https://howofwhat.com/api/course-user-by-admin?email=".getLoggedInUser()->email;
-            $getUsers = $this->send_request($url, "GET");
-            $result = json_decode($getUsers, 1);
-            if(isset($result['data']) && count($result['data'])) {
-                $users = User::orderBy('name','asc')->whereIn('email', $result['data'])->get();
+            $result = getLoggedInUser()->with('coursesAndUsers')->first();
+            $users = [];
+            
+            if(!is_null($result->coursesAndUsers) && !empty($result->coursesAndUsers) ) {
+                foreach($result->coursesAndUsers as $course) {
+                    if(!is_null($course->enrolledStudents)) {
+                        foreach($course->enrolledStudents as $userData) {
+                            $users[] = $userData;
+                        }
+                    }
+                }
             }
+            // $url = "https://howofwhat.com/api/course-user-by-admin?email=".getLoggedInUser()->email;
+            // $getUsers = $this->send_request($url, "GET");
+            // $result = json_decode($getUsers, 1);
+            // if(isset($result['data']) && count($result['data'])) {
+            //     $users = User::orderBy('name','asc')->whereIn('email', $result['data'])->get();
+            // }
 
             // $users = User::orderBy('name','asc')->whereHas('roles', function($q){
             //     $q->where('id', 2);
             // })->get();
         }
-        //$users = User::orderBy('name','asc')->get()->except(getLoggedInUserId());
-    
+        //$users = User::orderBy('name','asc')->get()->except(getLoggedInUserId());*/
+
+        $result = getLoggedInUser()->coursesAndUsers;
+        $users = [];
+   
+        if(!is_null($result) && !empty($result) ) {
+            foreach($result as $course) {
+                if(!is_null($course->enrolledStudents)) {
+                    foreach($course->enrolledStudents as $userData) {
+                        $users[] = $userData;
+                    }
+                }
+            }
+        }
+            
         return $this->sendResponse(['users' => $users], 'Users retrieved successfully.');
     }
     /**

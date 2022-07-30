@@ -23,8 +23,10 @@ Route::post('/register', 'AuthAPIController@register');
 Route::post('password/reset', 'PasswordResetController@sendResetPasswordLink');
 Route::post('password/update', 'PasswordResetController@reset');
 Route::get('activate', 'AuthAPIController@verifyAccount');
+Route::get('/roles', 'RoleAPIController@index');
 
-Route::group(['middleware' => ['auth:api', 'user.activated']], function () {
+// Route::group(['middleware' => ['auth:api', 'user.activated']], function () {
+    Route::group(['middleware' => ['auth:api']], function () {
     Route::post('broadcasting/auth', '\Illuminate\Broadcasting\BroadcastController@authenticate');
     Route::get('logout', 'AuthAPIController@logout');
 
@@ -49,8 +51,8 @@ Route::group(['middleware' => ['role:Admin', 'auth:api', 'user.activated']], fun
     Route::post('users/{user}/active-de-active', 'AdminUsersAPIController@activeDeActiveUser')
         ->name('active-de-active-user');
 
-    Route::resource('roles', 'RoleAPIController');
-    Route::post('roles/{role}/update', 'RoleAPIController@update');
+    // Route::resource('roles', 'RoleAPIController');
+    // Route::post('roles/{role}/update', 'RoleAPIController@update');
 });
 Route::post('user/insert-user', 'UsersController@insert');
 Route::post('user/update-user-password', 'UsersController@updatePassword');
